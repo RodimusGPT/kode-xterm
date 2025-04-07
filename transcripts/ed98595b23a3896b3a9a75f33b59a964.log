@@ -1,0 +1,74 @@
+# Terminal Transcript
+# Session ID: ed98595b23a3896b3a9a75f33b59a964
+# Host: 85.31.234.214
+# User: vibe
+# Started: 2025-03-28T17:11:40.681Z
+
+[2025-03-28T17:11:40.683Z] [SYSTEM] Client connected to session
+[2025-03-28T17:11:41.581Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Fri Mar 28 17:11:41 UTC 2025\r\n\r\n  System load:  0.0                Processes:             169\r\n  Usage of /:   4.3% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n
+[2025-03-28T17:11:41.584Z] [OUTPUT]   Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n23 updates can be applied immediately.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\n*** System restart required ***\r\nLast login: Fri Mar 28 16:57:00 2025 from 108.247.126.167\r\r\n
+[2025-03-28T17:11:41.617Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T17:11:42.537Z] [OUTPUT] l
+[2025-03-28T17:11:42.656Z] [OUTPUT] s
+[2025-03-28T17:11:42.777Z] [COMMAND] ls
+[2025-03-28T17:11:42.808Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T17:11:42.810Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-03-28T17:11:42.812Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T17:11:43.898Z] [OUTPUT] c
+[2025-03-28T17:11:43.929Z] [OUTPUT] d
+[2025-03-28T17:11:44.033Z] [OUTPUT]  
+[2025-03-28T17:11:44.361Z] [OUTPUT] p
+[2025-03-28T17:11:44.453Z] [OUTPUT] r
+[2025-03-28T17:11:44.670Z] [OUTPUT] ojects/
+[2025-03-28T17:11:44.840Z] [COMMAND] cd pr
+[2025-03-28T17:11:44.869Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T17:11:44.872Z] [OUTPUT] [?2004hvibe@srv757028:~/projects$ 
+[2025-03-28T17:11:45.073Z] [OUTPUT] l
+[2025-03-28T17:11:45.180Z] [OUTPUT] s
+[2025-03-28T17:11:45.295Z] [COMMAND] ls
+[2025-03-28T17:11:45.324Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T17:11:45.325Z] [OUTPUT] [0m[01;34mrest-proxy[0m  [01;34mrestclaude-js[0m  [01;34mrestcoder[0m  [01;34msrc[0m  [01;34mxpra-html5[0m\r\n
+[2025-03-28T17:11:45.326Z] [OUTPUT] [?2004hvibe@srv757028:~/projects$ 
+[2025-03-28T17:12:18.179Z] [OUTPUT] p
+[2025-03-28T17:12:18.283Z] [OUTPUT] s
+[2025-03-28T17:12:18.387Z] [OUTPUT]  
+[2025-03-28T17:12:18.495Z] [OUTPUT] a
+[2025-03-28T17:12:18.721Z] [OUTPUT] x
+[2025-03-28T17:12:18.871Z] [COMMAND] ps ax
+[2025-03-28T17:12:18.901Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T17:12:18.959Z] [OUTPUT]     PID TTY      STAT   TIME COMMAND\r\n      1 ?        Ss     0:50 /sbin/init\r\n      2 ?        S      0:00 [kthreadd]\r\n      3 ?        S      0:00 [pool_workqueue_release]\r\n      4 ?        I<     0:00 [kworker/R-rcu_g]\r\n      5 ?        I<     0:00 [kworker/R-rcu_p]\r\n      6 ?        I<     0:00 [kworker/R-slub_]\r\n      7 ?        I<     0:00 [kworker/R-netns]\r\n      9 ?        I<     0:00 [kworker/0:0H-events_highpri]\r\n     12 ?        I<     0:00 [kworker/R-mm_pe]\r\n     13 ?        I      0:00 [rcu_tasks_kthread]\r\n     14 ?        I      0:00 [rcu_tasks_rude_kthread]\r\n     15 ?        I      0:00 [rcu_tasks_trace_kthread]\r\n     16 ?        S      0:04 [ksoftirqd/0]\r\n     17 ?        I     20:05 [rcu_preempt]\r\n     18 ?        S      0:06 [migration/0]\r\n     19 ?        S      0:00 [idle_inject/0]\r\n     20 ?        S      0:00 [cpuhp/0]\r\n     21 ?        S      0:00 [cpuhp/1]\r\n     22 ?        S      0:00 [idle_inject/1]\r\n     23 ?        S      0:13 [migration/1]\r\n     24 ?        S      0:06 [ksoftirqd/1]\r\n     26 ?        I<     0:00 [kworker/1:0H-events_highpri]\r\n     27 ?        S      0:00 [cpuhp/2]\r\n     28 ?        S      0:00 [idle_inject/2]\r\n     29 ?        S      0:13 [migration/2]\r\n     30 ?        S      0:04 [ksoftirqd/2]\r\n     32 ?        I<     0:00 [kworker/2:0H-events_highpri]\r\n     33 ?        S      0:00 [cpuhp/3]\r\n     34 ?        S      0:00 [idle_inject/3]\r\n     35 ?        S      0:13 [migration/3]\r\n     36 ?        S      0:04 [ksoftirqd/3]\r\n     38 ?        I<     0:05 [kworker/3:0H-kblockd]\r\n     39 ?        S      0:00 [kdevtmpfs]\r\n     40 ?        I<     0:00 [kworker/R-inet_]\r\n
+[2025-03-28T17:12:18.961Z] [OUTPUT]      42 ?        S      0:00 [kauditd]\r\n     43 ?        S      0:00 [khungtaskd]\r\n     44 ?        S      0:00 [oom_reaper]\r\n     46 ?        I<     0:00 [kworker/R-write]\r\n     47 ?        S      0:49 [kcompactd0]\r\n     48 ?        SN     0:00 [ksmd]\r\n     50 ?        SN     0:00 [khugepaged]\r\n     51 ?        I<     0:00 [kworker/R-kinte]\r\n
+[2025-03-28T17:12:18.963Z] [OUTPUT]      52 ?        I<     0:00 [kworker/R-kbloc]\r\n     53 ?        I<     0:00 [kworker/R-blkcg]\r\n     54 ?        S      0:00 [irq/9-acpi]\r\n     57 ?        I<     0:00 [kworker/R-tpm_d]\r\n     58 ?        I<     0:00 [kworker/R-ata_s]\r\n     59 ?        I<     0:00 [kworker/R-md]\r\n     60 ?        I<     0:00 [kworker/R-md_bi]\r\n     61 ?        I<     0:00 [kworker/R-edac-]\r\n     62 ?        I<     0:00 [kworker/R-devfr]\r\n     63 ?        S      0:00 [watchdogd]\r\n     65 ?        S      0:00 [kswapd0]\r\n
+[2025-03-28T17:12:18.964Z] [OUTPUT]      66 ?        S      0:00 [ecryptfs-kthread]\r\n     67 ?        I<     0:00 [kworker/R-kthro]\r\n
+[2025-03-28T17:12:18.965Z] [OUTPUT]      68 ?        I<     0:00 [kworker/R-acpi_]\r\n
+[2025-03-28T17:12:18.966Z] [OUTPUT]      70 ?        S      0:00 [scsi_eh_0]\r\n
+[2025-03-28T17:12:18.967Z] [OUTPUT]      71 ?        I<     0:00 [kworker/R-scsi_]\r\n     72 ?        S      0:00 [scsi_eh_1]\r\n     73 ?        I<     0:00 [kworker/R-scsi_]\r\n     74 ?        S      0:00 [scsi_eh_2]\r\n     75 ?        I<     0:00 [kworker/R-scsi_]\r\n     78 ?        I<     0:04 [kworker/0:1H-kblockd]\r\n     81 ?        I<     0:02 [kworker/3:1H-kblockd]\r\n     82 ?        I<     0:00 [kworker/R-mld]\r\n     83 ?        I<     0:00 [kworker/R-ipv6_]\r\n     90 ?        I<     0:00 [kworker/R-kstrp]\r\n     92 ?        I<     0:00 [kworker/u9:0]\r\n     97 ?        I<     0:00 [kworker/R-crypt]\r\n
+[2025-03-28T17:12:18.968Z] [OUTPUT]     107 ?        I<     0:00 [kworker/R-charg]\r\n    152 ?        I<     0:03 [kworker/2:1H-kblockd]\r\n
+[2025-03-28T17:12:18.969Z] [OUTPUT]     215 ?        I<     0:00 [kworker/R-raid5]\r\n    259 ?        S      0:35 [jbd2/sda1-8]\r\n    260 ?        I<     0:00 [kworker/R-ext4-]\r\n    332 ?        S<s    0:35 /usr/lib/systemd/systemd-journald\r\n    352 ?        I<     0:00 [kworker/R-kmpat]\r\n    353 ?        I<     0:00 [kworker/R-kmpat]\r\n
+[2025-03-28T17:12:18.970Z] [OUTPUT]     380 ?        SLsl   1:54 /sbin/multipathd -d -s\r\n    400 ?        Ss     0:02 /usr/lib/systemd/systemd-udevd\r\n    408 ?        S      0:00 [psimon]\r\n    503 ?        S      0:00 [jbd2/sda16-8]\r\n    504 ?        I<     0:00 [kworker/R-ext4-]\r\n    571 ?        Ss     0:18 /usr/lib/systemd/systemd-resolved
+[2025-03-28T17:12:18.971Z] [OUTPUT] \r\n    586 ?        Ssl    0:03 /usr/lib/systemd/systemd-timesyncd\r\n    715 ?        Ss     0:12 /usr/lib/systemd/systemd-networkd\r\n    817 ?        Ss     0:03 /usr/sbin/cron -f -P\r\n    818 ?        Ss     0:06 @dbus-daemon --system --address=systemd: --nofork -\r\n    828 ?        Ssl    0:27 /usr/lib/polkit-1/polkitd --no-debug\r\n    831 ?        Ssl   12:31 /usr/sbin/qemu-ga\r\n    847 ?        Ss     0:03 /usr/lib/systemd/systemd-logind\r\n
+[2025-03-28T17:12:18.972Z] [OUTPUT]     857 ?        Ssl    0:20 /usr/libexec/udisks2/udisksd\r\n    901 ?        Ssl    0:07 /usr/sbin/rsyslogd -n -iNONE\r\n    933 ?        Ssl    0:00 /usr/bin/python3 /usr/share/unattended-upgrades/una\r\n    972 ?        Ssl    0:00 /usr/sbin/ModemManager\r\n
+[2025-03-28T17:12:18.973Z] [OUTPUT]    1055 ttyS0    Ss+    0:00 /sbin/agetty -o -p -- \u --keep-baud 115200,57600,3\r\n   1059 tty1     Ss+    0:00 /sbin/agetty -o -p -- \u --noclear - linux\r\n   1558 ?        I<     0:00 [kworker/R-tls-s]\r\n
+[2025-03-28T17:12:18.974Z] [OUTPUT]    2619 ?        SNsl  57:22 /usr/bin/monarx-agent\r\n   3570 ?        Ss     0:07 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 star\r\n   3575 ?        Ss     0:00 /usr/lib/systemd/systemd --user\r\n   3576 ?        S      0:00 (sd-pam)\r\n   8427 ?        Ss     0:00 /usr/bin/dbus-daemon --session --address=systemd: -\r\n   8501 ?        Ssl    0:00 /usr/libexec/at-spi-bus-launcher\r\n  12752 ?        Ss     0:01 Xvfb-for-Xpra-:100 +extension GLX +extension Compos\r\n
+[2025-03-28T17:12:18.974Z] [OUTPUT]   12786 ?        S      0:00 /bin/sh /etc/X11/Xsession true\r\n  12787 ?        Sl     9:46 firefox\r\n
+[2025-03-28T17:12:18.975Z] [OUTPUT]   12808 ?        S      0:00 xmessage -center -file -\r\n  12908 ?        Z      0:00 [forkserver] <defunct>\r\n  12940 ?        Sl     0:10 /usr/lib/firefox/firefox-bin -contentproc -isForBro\r\n  12957 ?        Sl     0:00 /usr/lib/firefox/firefox-bin -contentproc -parentBu
+[2025-03-28T17:12:18.987Z] [OUTPUT] \r\n  13005 ?        Sl     0:00 /usr/lib/firefox/firefox-bin -contentproc -isForBro\r\n
+[2025-03-28T17:12:18.988Z] [OUTPUT]   13028 ?        Sl     0:01 /usr/lib/firefox/firefox-bin -contentproc -isForBro\r\n  13056 ?        Sl     0:00 /usr/lib/firefox/firefox-bin -contentproc -parentBu\r\n  13063 ?        Sl     0:00 /usr/lib/firefox/firefox-bin -contentproc -isForBro\r\n  13065 ?        Sl     0:00 /usr/lib/firefox/firefox-bin -contentproc -isForBro\r\n  13492 ?        S      0:02 Xvfb-for-Xpra-S13458 +extension GLX +extension Comp\r\n  14396 ?        S      0:01 Xvfb-for-Xpra-S14362 +extension GLX +extension Comp\r\n
+[2025-03-28T17:12:18.989Z] [OUTPUT]   14430 ?        S      0:00 /bin/sh /etc/X11/Xsession true\r\n
+[2025-03-28T17:12:18.989Z] [OUTPUT]   14452 ?        S      0:00 xmessage -center -file -\r\n  14878 ?        S      0:00 Xvfb-for-Xpra-S14844 +extension GLX +extension Comp\r\n  14912 ?        Sl     0:00 x-terminal-emulator\r\n  15087 ?        Ss     0:06 /usr/bin/ssh-agent x-terminal-emulator\r\n  15098 pts/3    Ss+    0:00 bash\r\n
+[2025-03-28T17:12:18.990Z] [OUTPUT]   15149 ?        S     17:48 Xvfb-for-Xpra-S15115 +extension GLX +extension Comp\r\n  15183 ?        Sl     0:29 x-terminal-emulator\r\n
+[2025-03-28T17:12:18.990Z] [OUTPUT]   15403 ?        Ss     0:06 /usr/bin/ssh-agent x-terminal-emulator\r\n  15414 pts/4    Ss+    0:00 bash\r\n  15538 ?        S      0:00 /usr/bin/dbus-daemon --config-file=/usr/share/defau\r\n  15543 ?        Sl     0:00 /usr/libexec/at-spi2-registryd --use-gnome-session\r\n  21206 ?        Ssl    0:00 /usr/libexec/dconf-service\r\n  25371 ?        S      0:02 Xvfb-for-Xpra-S25337 +extension GLX +extension Comp\r\n  25421 ?        Sl     0:07 x-terminal-emulator\r\n  25582 ?        Ss     0:06 /usr/bin/ssh-agent x-terminal-emulator\r\n  25593 pts/1    Ss+    0:00 bash\r\n  28113 ?        Ssl    1:24 /usr/libexec/fwupd/fwupd\r\n  54779 ?        Ss     0:01 Xvfb-for-Xpra-:101 +extension GLX +extension Compos\r\n
+[2025-03-28T17:12:18.991Z] [OUTPUT]   54829 ?        S      0:00 /bin/sh /etc/X11/Xsession true\r\n  54830 ?        S      0:00 xterm
+[2025-03-28T17:12:18.991Z] [OUTPUT] \r\n  54849 ?        S      0:00 xmessage -center -file -\r\n  54852 pts/5    Ss+    0:00 bash\r\n
+[2025-03-28T17:12:18.992Z] [OUTPUT]   55525 ?        Ss     0:02 Xvfb-for-Xpra-:102 +extension GLX +extension Compos\r\n  55559 ?        Sl     0:04 x-terminal-emulator\r\n
+[2025-03-28T17:12:18.993Z] [OUTPUT]   55560 ?        S      0:00 xterm -geometry 200x50\r\n  55611 pts/7    Ss+    0:00 bash\r\n  56230 ?        Ss     0:05 /usr/bin/ssh-agent x-terminal-emulator\r\n  56241 pts/8    Ss+    0:00 bash\r\n
+[2025-03-28T17:12:18.993Z] [OUTPUT]   84370 ?        I<     0:01 [kworker/1:2H-kblockd]\r\n
+[2025-03-28T17:12:18.994Z] [OUTPUT]   84401 ?        Ssl    1:22 /usr/lib/snapd/snapd\r\n 129101 ?        S      0:00 [psimon]\r\n
+[2025-03-28T17:12:18.994Z] [OUTPUT]  139510 ?        I      0:01 [kworker/1:0-events]\r\n 140388 ?        I      0:00 [kworker/3:3-mm_percpu_wq]\r\n 140582 ?        I      0:00 [kworker/u8:1-events_power_efficient]\r\n 140619 ?        I      0:00 [kworker/3:0]\r\n 140924 ?        I      0:00 [kworker/u8:3-events_unbound]\r\n 140926 ?        I      0:00 [kworker/2:2-cgroup_destroy]\r\n 141009 ?        I      0:00 [kworker/0:0-events]\r\n 141100 ?        I      0:00 [kworker/0:2-cgroup_destroy]\r\n
+[2025-03-28T17:12:18.994Z] [OUTPUT]  141101 ?        I      0:00 [kworker/u8:4-events_power_efficient]\r\n 141286 ?        I      0:00 [kworker/1:3-cgwb_release]\r\n
+[2025-03-28T17:12:18.995Z] [OUTPUT]  141435 ?        I      0:00 [kworker/u8:2-events_power_efficient]\r\n
+[2025-03-28T17:12:18.995Z] [OUTPUT]  141501 ?        I      0:00 [kworker/2:0-events]\r\n 141513 ?        I      0:00 [kworker/0:1]
+[2025-03-28T17:12:18.996Z] [OUTPUT] \r\n 141514 ?        I      0:00 [kworker/0:3-mm_percpu_wq]\r\n
+[2025-03-28T17:12:18.996Z] [OUTPUT]  141515 ?        Ss     0:00 sshd: vibe [priv]\r\n 141572 ?        S      0:00 sshd: vibe@pts/0\r\n 141573 pts/0    Ss     0:00 -bash\r\n 141588 pts/0    R+     0:00 ps ax\r\n
+[2025-03-28T17:12:18.997Z] [OUTPUT] [?2004hvibe@srv757028:~/projects$ 
+[2025-03-28T17:13:53.655Z] [SYSTEM] Terminal session closed

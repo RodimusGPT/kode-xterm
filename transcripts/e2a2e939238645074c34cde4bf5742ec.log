@@ -1,0 +1,21 @@
+# Terminal Transcript
+# Session ID: e2a2e939238645074c34cde4bf5742ec
+# Host: 85.31.234.214
+# User: vibe
+# Started: 2025-03-28T16:24:22.405Z
+
+[2025-03-28T16:24:22.407Z] [SYSTEM] Client connected to session
+[2025-03-28T16:24:23.389Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Fri Mar 28 16:24:22 UTC 2025\r\n\r\n  System load:  0.0                Processes:             170\r\n  Usage of /:   4.3% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n
+[2025-03-28T16:24:23.392Z] [OUTPUT]   Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n23 updates can be applied immediately.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\n*** System restart required ***\r\nLast login: Fri Mar 28 16:20:31 2025 from 108.247.126.167\r\r\n
+[2025-03-28T16:24:23.440Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T16:24:24.613Z] [OUTPUT] p
+[2025-03-28T16:24:24.686Z] [OUTPUT] w
+[2025-03-28T16:24:24.791Z] [OUTPUT] d
+[2025-03-28T16:24:24.915Z] [COMMAND] pwd
+[2025-03-28T16:24:24.945Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T16:24:24.947Z] [OUTPUT] /home/vibe\r\n
+[2025-03-28T16:24:24.948Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T16:24:34.527Z] [OUTPUT] c
+[2025-03-28T16:24:34.575Z] [OUTPUT] d
+[2025-03-28T16:24:34.710Z] [COMMAND] cd
+[2025-03-28T16:24:34.739Z] [OUTPUT] \r\n[?2004l\r[?2004hvibe@srv757028:~$ 

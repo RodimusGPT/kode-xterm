@@ -1,0 +1,261 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.backLink {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #0070f3;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.backLink:hover {
+  background-color: #0051cf;
+}
+
+.error {
+  padding: 12px;
+  background-color: #ffdddd;
+  color: #d63031;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  height: calc(100vh - 150px);
+}
+
+.transcriptList {
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.transcriptList h2 {
+  margin: 0;
+  padding: 15px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 18px;
+}
+
+.transcriptList ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.transcriptItem {
+  padding: 15px;
+  border-bottom: 1px solid #eaeaea;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transcriptItem:hover {
+  background-color: #f0f7ff;
+}
+
+.transcriptItem.selected {
+  background-color: #e6f2ff;
+  border-left: 3px solid #0070f3;
+}
+
+.transcriptInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.host {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.date {
+  font-size: 12px;
+  color: #666;
+}
+
+.activeIndicator {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #4CAF50;
+  padding: 3px 6px;
+  border-radius: 10px;
+  margin-top: 5px;
+  display: inline-block;
+}
+
+.deleteButton {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #ff1f1f;
+}
+
+.transcriptContent {
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.transcriptHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #eaeaea;
+  padding: 0 15px;
+}
+
+.transcriptHeader h2 {
+  margin: 0;
+  padding: 15px 0;
+  font-size: 18px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.controlLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.liveButton {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.liveButton:hover {
+  background-color: #5a6268;
+}
+
+.liveActive {
+  background-color: #28a745;
+}
+
+.liveActive:hover {
+  background-color: #218838;
+}
+
+.terminal {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  font-family: 'Courier New', monospace;
+  padding: 15px;
+  margin: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  position: relative;
+}
+
+.liveIndicator {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  color: #28a745;
+  font-size: 24px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+.loading {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.actionBar {
+  display: flex;
+  padding: 10px 15px;
+  background-color: #f0f7ff;
+  border-bottom: 1px solid #d1e6ff;
+}
+
+.returnButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.returnButton:hover {
+  background-color: #218838;
+}
+
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}

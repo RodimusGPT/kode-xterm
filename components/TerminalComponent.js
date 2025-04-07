@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function TerminalComponent({ sessionId, onSessionClose }) {
+export default function TerminalComponent({ sessionId, onSessionClose, panelId }) {
   const terminalRef = useRef(null);
   const terminalContainerRef = useRef(null);
   const fitAddonRef = useRef(null);
@@ -9,13 +9,47 @@ export default function TerminalComponent({ sessionId, onSessionClose }) {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
 
+  // Maybe set isTerminalReady in forceResize after a successful fit?
+  // Let's modify forceResize slightly:
+  const forceResize = () => {
+    if (fitAddonRef.current && terminalRef.current && terminalContainerRef.current) {
+      console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: forceResize executing`); // Log entry
+      try {
+        if (terminalContainerRef.current.clientHeight > 0 &&
+            terminalContainerRef.current.clientWidth > 0) {
+          console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Container has dimensions (${terminalContainerRef.current.clientWidth}x${terminalContainerRef.current.clientHeight}), fitting...`); // Log fit attempt
+          fitAddonRef.current.fit();
+          terminalRef.current.scrollToBottom();
+          console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Fit and scroll complete. New size: ${terminalRef.current.cols}x${terminalRef.current.rows}`); // Log success
+          setIsTerminalReady(true); // Set ready after successful fit
+          // Optionally send resize to server again, though might be redundant
+          // if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          //   wsRef.current.send(JSON.stringify({
+          //     type: 'resize',
+          //     cols: terminalRef.current.cols,
+          //     rows: terminalRef.current.rows
+          //   }));
+          // }
+        } else {
+           console.log('TerminalComponent: Container has no dimensions, skipping force fit');
+        }
+      } catch (e) {
+        console.error('Error during force resize fit:', e);
+      }
+    } else {
+       console.log('TerminalComponent: Refs not ready for force resize');
+    }
+  };
+
+
   // Initialize terminal when component mounts or when sessionId changes
   useEffect(() => {
-    console.log(`TerminalComponent: sessionId changed to ${sessionId}`);
-    
+    console.log(`TerminalComponent: sessionId changed to ${sessionId}, panelId: ${panelId || 'unknown'}`);
     if (!sessionId) return;
-    
-    // Make sure the DOM element is visible before initializing
+
+    let observer = null; // Define observer variable
+    let panelBDelayedFitTimer = null; // For delayed fit in Panel B
+
     const timer = setTimeout(() => {
       // If terminal already exists, dispose it first
       if (terminalRef.current) {
@@ -23,24 +57,76 @@ export default function TerminalComponent({ sessionId, onSessionClose }) {
         terminalRef.current.dispose();
         terminalRef.current = null;
       }
-      
-      // Initialize new terminal
-      initTerminal();
-      
-      // Initialize WebSocket connection
+
+      initTerminal(); // Initializes terminal, fitAddon etc.
       initWebSocket();
-    }, 500);
+
+      // --- ResizeObserver Setup ---
+      if (terminalContainerRef.current) {
+        observer = new ResizeObserver((entries) => {
+          // Log the observed size
+          for (let entry of entries) {
+            const { width, height } = entry.contentRect;
+            console.log(`ResizeObserver [${sessionId?.substring(0,4)}/${panelId || '?'}] triggered: Observed size ${width}x${height}. Calling forceResize.`);
+          }
+          forceResize();
+        });
+        observer.observe(terminalContainerRef.current);
+        console.log(`ResizeObserver [${sessionId?.substring(0,4)}/${panelId || '?'}] observing terminal container.`);
+      }
+      // --- End ResizeObserver Setup ---
+
+      // Special handling for Panel B - Add delayed fit
+      if (panelId === 'B') {
+        console.log('Panel B detected: Adding delayed fit timers');
+        
+        // First fit after 1 second
+        panelBDelayedFitTimer = setTimeout(() => {
+          console.log('PANEL B: Executing 1-second delayed fit');
+          if (fitAddonRef.current && terminalRef.current) {
+            try {
+              fitAddonRef.current.fit();
+              console.log('PANEL B: 1-second delayed fit complete');
+            } catch(e) {
+              console.error('Error in Panel B delayed fit:', e);
+            }
+          }
+          
+          // Second fit after 2 seconds total
+          setTimeout(() => {
+            console.log('PANEL B: Executing 2-second delayed fit');
+            if (fitAddonRef.current && terminalRef.current) {
+              try {
+                fitAddonRef.current.fit();
+                console.log('PANEL B: 2-second delayed fit complete');
+              } catch(e) {
+                console.error('Error in Panel B second delayed fit:', e);
+              }
+            }
+          }, 1000);
+        }, 1000);
+      }
+
+    }, 500); // Initial delay before setup
 
     return () => {
       clearTimeout(timer);
-      
+      // Clear Panel B special timer if it exists
+      if (panelBDelayedFitTimer) {
+        clearTimeout(panelBDelayedFitTimer);
+      }
+      // Disconnect observer on cleanup
+      if (observer) {
+        console.log('Disconnecting ResizeObserver.');
+        observer.disconnect();
+      }
       // Clean up WebSocket on unmount
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
       }
     };
-  }, [sessionId]); // Re-initialize when sessionId changes
+  }, [sessionId, panelId]); // Re-initialize when sessionId or panelId changes
 
   // Initialize WebSocket connection
   const initWebSocket = () => {
@@ -79,8 +165,47 @@ export default function TerminalComponent({ sessionId, onSessionClose }) {
         switch (message.type) {
           case 'output':
             // Write terminal output
+            // Write terminal output
             if (terminalRef.current && message.data) {
-              terminalRef.current.write(message.data);
+              // --- START: Added logging around write ---
+              const term = terminalRef.current;
+              console.log('[Before write] State:', {
+                viewportY: term.buffer.active.viewportY,
+                baseY: term.buffer.active.baseY,
+                rows: term.rows,
+                clientHeight: term.element?.clientHeight,
+              });
+              term.write(message.data);
+              console.log('[After write] State:', {
+                 viewportY: term.buffer.active.viewportY,
+                 baseY: term.buffer.active.baseY,
+                 rows: term.rows,
+                 clientHeight: term.element?.clientHeight,
+               });
+              // --- END: Added logging around write ---
+
+              // Use setTimeout to delay scroll reset slightly after write
+              setTimeout(() => {
+                 // Re-check refs inside timeout
+                 if (terminalRef.current) { // Only need terminalRef
+                    try {
+                      console.log('TerminalComponent: Resetting scroll after write (delayed)');
+                      // REMOVED: fitAddonRef.current.fit();
+                      terminalRef.current.scrollToTop();
+                      terminalRef.current.scrollToBottom();
+                      // --- START: Added logging after scroll ---
+                      console.log('[After scroll attempts] State:', {
+                        viewportY: term.buffer.active.viewportY,
+                        baseY: term.buffer.active.baseY,
+                        rows: term.rows,
+                        clientHeight: term.element?.clientHeight,
+                      });
+                      // --- END: Added logging after scroll ---
+                    } catch (e) {
+                      console.error('Error scrolling after write (delayed):', e);
+                    }
+                 }
+              }, 0); // Minimal delay
             }
             break;
             
@@ -170,31 +295,18 @@ export default function TerminalComponent({ sessionId, onSessionClose }) {
       terminalRef.current = term;
       fitAddonRef.current = fitAddon;
       
-      // Fit terminal to container
+      // REMOVE initial fit setTimeout block entirely
+      /*
       setTimeout(() => {
-        try {
-          // Only fit if the element has dimensions
-          if (terminalContainerRef.current.clientHeight > 0 && 
-              terminalContainerRef.current.clientWidth > 0) {
-            fitAddon.fit();
-            
-            // Send initial dimensions to server
-            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-              wsRef.current.send(JSON.stringify({
-                type: 'resize',
-                cols: term.cols,
-                rows: term.rows
-              }));
-            }
-          }
-        } catch (e) {
-          console.error('Error fitting terminal:', e);
-        }
-        
-        // Mark terminal as ready
-        setIsTerminalReady(true);
-      }, 100);
-      
+         // ... old fit logic ...
+         // setIsTerminalReady(true); // Don't set ready here anymore
+      }, 150);
+      */
+
+      // Set terminal ready state maybe after websocket connects or first resize happens?
+      // For simplicity now, let's assume connection implies readiness for interaction.
+      // We can refine this if needed. Maybe set it in forceResize?
+
       // Handle terminal input
       term.onData(data => {
         // Send input to server
@@ -213,6 +325,7 @@ export default function TerminalComponent({ sessionId, onSessionClose }) {
       const handleResize = () => {
         if (fitAddonRef.current && terminalRef.current) {
           try {
+            console.log('TerminalComponent: Window resize detected, fitting terminal'); // Added log
             fitAddonRef.current.fit();
             
             // Send new dimensions to server
@@ -255,21 +368,11 @@ export default function TerminalComponent({ sessionId, onSessionClose }) {
       
       <div 
         ref={terminalContainerRef}
-        className="h-[70vh] w-full bg-black flex-grow"
-        style={{ minHeight: '400px', position: 'relative' }}
+        className="w-full bg-black flex-grow"
+        style={{ position: 'relative', height: '100%' }} // Added explicit height
       />
       
-      <div className="flex justify-between items-center px-2 py-1 bg-gray-800 text-white text-xs">
-        <span>
-          {isConnected ? (
-            <span className="text-green-400">● Connected</span>
-          ) : (
-            <span className="text-red-400">● Disconnected</span>
-          )}
-        </span>
-        
-        <span>Session: {sessionId?.substring(0, 8) || 'None'}</span>
-      </div>
+      {/* Status bar removed per user request */}
     </div>
   );
 }

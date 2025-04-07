@@ -1,0 +1,77 @@
+# Terminal Transcript
+# Session ID: b9fc23fe1581c913a3c80b564544e9d9
+# Host: 85.31.234.214
+# User: vibe
+# Started: 2025-03-28T05:45:24.795Z
+
+[2025-03-28T05:45:24.796Z] [SYSTEM] Client connected to session
+[2025-03-28T05:45:25.795Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Fri Mar 28 05:45:25 UTC 2025\r\n\r\n  System load:  0.0                Processes:             174\r\n  Usage of /:   4.3% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n
+[2025-03-28T05:45:25.797Z] [OUTPUT]   Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n36 updates can be applied immediately.\r\n13 of these updates are standard security updates.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\nLast login: Fri Mar 28 05:42:50 2025 from 108.247.126.167\r\r\n
+[2025-03-28T05:45:25.835Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T05:45:27.057Z] [INPUT] l
+[2025-03-28T05:45:27.092Z] [OUTPUT] l
+[2025-03-28T05:45:27.160Z] [INPUT] s
+[2025-03-28T05:45:27.191Z] [OUTPUT] s
+[2025-03-28T05:45:27.296Z] [INPUT] \r
+[2025-03-28T05:45:27.329Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T05:45:27.331Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-03-28T05:45:27.331Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T05:45:28.517Z] [INPUT] c
+[2025-03-28T05:45:28.550Z] [OUTPUT] c
+[2025-03-28T05:45:28.585Z] [INPUT] d
+[2025-03-28T05:45:28.616Z] [INPUT]  
+[2025-03-28T05:45:28.617Z] [OUTPUT] d
+[2025-03-28T05:45:28.648Z] [OUTPUT]  
+[2025-03-28T05:45:28.767Z] [INPUT] p
+[2025-03-28T05:45:28.799Z] [OUTPUT] p
+[2025-03-28T05:45:28.857Z] [INPUT] r
+[2025-03-28T05:45:28.890Z] [OUTPUT] r
+[2025-03-28T05:45:28.931Z] [INPUT] o
+[2025-03-28T05:45:28.960Z] [INPUT] j
+[2025-03-28T05:45:28.968Z] [OUTPUT] o
+[2025-03-28T05:45:29.000Z] [OUTPUT] j
+[2025-03-28T05:45:29.124Z] [INPUT] e
+[2025-03-28T05:45:29.157Z] [OUTPUT] e
+[2025-03-28T05:45:29.214Z] [INPUT] c
+[2025-03-28T05:45:29.246Z] [OUTPUT] c
+[2025-03-28T05:45:29.426Z] [INPUT] t
+[2025-03-28T05:45:29.458Z] [OUTPUT] t
+[2025-03-28T05:45:29.576Z] [INPUT] s
+[2025-03-28T05:45:29.608Z] [OUTPUT] s
+[2025-03-28T05:45:29.817Z] [INPUT] \r
+[2025-03-28T05:45:29.849Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T05:45:29.850Z] [OUTPUT] [?2004hvibe@srv757028:~/projects$ 
+[2025-03-28T05:45:30.161Z] [INPUT] l
+[2025-03-28T05:45:30.192Z] [OUTPUT] l
+[2025-03-28T05:45:30.235Z] [INPUT] s
+[2025-03-28T05:45:30.267Z] [OUTPUT] s
+[2025-03-28T05:45:30.340Z] [INPUT] \r
+[2025-03-28T05:45:30.372Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T05:45:30.374Z] [OUTPUT] [0m[01;34mrest-proxy[0m  [01;34mrestclaude-js[0m  [01;34mrestcoder[0m  [01;34msrc[0m  [01;34mxpra-html5[0m\r\n
+[2025-03-28T05:45:30.374Z] [OUTPUT] [?2004hvibe@srv757028:~/projects$ 
+[2025-03-28T05:45:32.177Z] [SYSTEM] Terminal session closed
+[2025-03-28T05:45:36.823Z] [SYSTEM] Client connected to session
+[2025-03-28T05:45:37.402Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Fri Mar 28 05:45:25 UTC 2025\r\n\r\n  System load:  0.0                Processes:             174\r\n  Usage of /:   4.3% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n  Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n36 updates can be applied immediately.\r\n13 of these updates are standard security updates.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\nLast login: Fri Mar 28 05:45:25 2025 from 108.247.126.167\r\r\n
+[2025-03-28T05:45:37.450Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T05:45:39.160Z] [INPUT] l
+[2025-03-28T05:45:39.194Z] [OUTPUT] l
+[2025-03-28T05:45:39.313Z] [INPUT] s
+[2025-03-28T05:45:39.343Z] [OUTPUT] s
+[2025-03-28T05:45:39.416Z] [INPUT] \r
+[2025-03-28T05:45:39.447Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T05:45:39.449Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-03-28T05:45:39.450Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T05:45:42.072Z] [INPUT] p
+[2025-03-28T05:45:42.112Z] [OUTPUT] p
+[2025-03-28T05:45:42.190Z] [INPUT] w
+[2025-03-28T05:45:42.222Z] [OUTPUT] w
+[2025-03-28T05:45:42.249Z] [INPUT] d
+[2025-03-28T05:45:42.280Z] [OUTPUT] d
+[2025-03-28T05:45:42.447Z] [INPUT] \r
+[2025-03-28T05:45:42.480Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T05:45:42.482Z] [OUTPUT] /home/vibe\r\n
+[2025-03-28T05:45:42.482Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T05:45:46.861Z] [SYSTEM] Terminal session closed
+[2025-03-28T05:45:52.735Z] [SYSTEM] Client connected to session
+[2025-03-28T05:45:53.292Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Fri Mar 28 05:45:25 UTC 2025\r\n\r\n  System load:  0.0                Processes:             174\r\n  Usage of /:   4.3% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n  Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n36 updates can be applied immediately.\r\n13 of these updates are standard security updates.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\nLast login: Fri Mar 28 05:45:37 2025 from 108.247.126.167\r\r\n
+[2025-03-28T05:45:53.332Z] [OUTPUT] [?2004hvibe@srv757028:~$ 

@@ -1,0 +1,35 @@
+# Terminal Transcript
+# Session ID: 7b255f6d7b5affbf39e53d177043b6a2
+# Host: 85.31.234.214
+# User: vibe
+# Started: 2025-03-28T16:45:56.629Z
+
+[2025-03-28T16:45:56.631Z] [SYSTEM] Client connected to session
+[2025-03-28T16:45:57.533Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Fri Mar 28 16:45:57 UTC 2025\r\n\r\n  System load:  0.08               Processes:             168\r\n  Usage of /:   4.3% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n
+[2025-03-28T16:45:57.536Z] [OUTPUT]   Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n23 updates can be applied immediately.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\n*** System restart required ***\r\nLast login: Fri Mar 28 16:39:42 2025 from 108.247.126.167\r\r\n
+[2025-03-28T16:45:57.569Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T16:45:58.495Z] [OUTPUT] l
+[2025-03-28T16:45:58.625Z] [OUTPUT] s
+[2025-03-28T16:45:58.776Z] [COMMAND] ls
+[2025-03-28T16:45:58.809Z] [OUTPUT] \r\n
+[2025-03-28T16:45:58.812Z] [OUTPUT] [?2004l\r
+[2025-03-28T16:45:58.814Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-03-28T16:45:58.815Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T16:46:08.374Z] [OUTPUT] p
+[2025-03-28T16:46:08.449Z] [OUTPUT] w
+[2025-03-28T16:46:08.556Z] [OUTPUT] d
+[2025-03-28T16:46:08.708Z] [COMMAND] pwd
+[2025-03-28T16:46:08.751Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T16:46:08.755Z] [OUTPUT] /home/vibe\r\n
+[2025-03-28T16:46:08.756Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-03-28T16:46:20.527Z] [OUTPUT] c
+[2025-03-28T16:46:20.588Z] [OUTPUT] d
+[2025-03-28T16:46:20.691Z] [OUTPUT]  
+[2025-03-28T16:46:21.292Z] [OUTPUT] p
+[2025-03-28T16:46:21.397Z] [OUTPUT] r
+[2025-03-28T16:46:21.470Z] [OUTPUT] o
+[2025-03-28T16:46:21.623Z] [OUTPUT] jects/
+[2025-03-28T16:46:21.935Z] [COMMAND] cd pro
+[2025-03-28T16:46:21.967Z] [OUTPUT] \r\n[?2004l\r
+[2025-03-28T16:46:21.969Z] [OUTPUT] [?2004hvibe@srv757028:~/projects$ 
+[2025-03-28T16:48:03.525Z] [SYSTEM] Terminal session closed

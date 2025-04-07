@@ -5,6 +5,33 @@ const WebSocket = require('ws');
 const { Client } = require('ssh2');
 const crypto = require('crypto');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+
+// Ensure transcripts directory exists
+const transcriptsDir = path.join(__dirname, '..', 'transcripts');
+if (!fs.existsSync(transcriptsDir)) {
+  fs.mkdirSync(transcriptsDir, { recursive: true });
+}
+
+// Track transcript metadata
+let transcriptsMetadata = [];
+const transcriptsMetadataPath = path.join(__dirname, '..', 'terminal_transcripts.json');
+
+// Load existing transcript metadata if available
+if (fs.existsSync(transcriptsMetadataPath)) {
+  try {
+    const data = fs.readFileSync(transcriptsMetadataPath, 'utf8');
+    const json = JSON.parse(data);
+    transcriptsMetadata = json.transcripts || [];
+  } catch (err) {
+    console.error('Error loading transcript metadata:', err);
+    transcriptsMetadata = [];
+  }
+} else {
+  // Initialize with empty array
+  fs.writeFileSync(transcriptsMetadataPath, JSON.stringify({ transcripts: [] }), 'utf8');
+}
 
 // Create Express app
 const app = express();
@@ -19,6 +46,85 @@ const wss = new WebSocket.Server({ server });
 
 // In-memory session store (would be replaced with Redis in production)
 const sessions = new Map();
+
+// Command buffer for each session to collect keystrokes until Enter is pressed
+const commandBuffers = new Map();
+
+// Track REPL environment states
+const replEnvironments = new Map();
+
+// Pending command flags - only record commands after Enter key
+const pendingCommands = new Map();
+
+// Transcript handling functions
+function createTranscript(sessionId, session) {
+  const timestamp = new Date().toISOString();
+  const filename = `${sessionId}.log`;
+  const filePath = path.join(transcriptsDir, filename);
+  
+  // Create transcript metadata
+  const transcript = {
+    id: sessionId,
+    filename,
+    host: session.host,
+    username: session.username,
+    createdAt: timestamp,
+    lastUpdatedAt: timestamp,
+  };
+  
+  // Add header to transcript file
+  const header = `# Terminal Transcript\n# Session ID: ${sessionId}\n# Host: ${session.host}\n# User: ${session.username}\n# Started: ${timestamp}\n\n`;
+  fs.writeFileSync(filePath, header, 'utf8');
+  
+  // Save transcript metadata
+  transcriptsMetadata.push(transcript);
+  saveTranscriptsMetadata();
+  
+  console.log(`Created transcript for session ${sessionId}`);
+  return transcript;
+}
+
+function appendToTranscript(sessionId, source, data) {
+  const timestamp = new Date().toISOString();
+  const filePath = path.join(transcriptsDir, `${sessionId}.log`);
+  
+  if (!fs.existsSync(filePath)) {
+    console.error(`Transcript file not found for session ${sessionId}`);
+    const session = sessions.get(sessionId);
+    if (session) {
+      createTranscript(sessionId, session);
+    } else {
+      return false;
+    }
+  }
+  
+  // Format the data with timestamp and direction indicator
+  const formattedData = `[${timestamp}] [${source}] ${data.replace(/\r/g, '\\r').replace(/\n/g, '\\n')}\n`;
+  
+  // Append to transcript file
+  fs.appendFileSync(filePath, formattedData, 'utf8');
+  
+  // Update last updated timestamp
+  const transcriptIndex = transcriptsMetadata.findIndex(t => t.id === sessionId);
+  if (transcriptIndex >= 0) {
+    transcriptsMetadata[transcriptIndex].lastUpdatedAt = timestamp;
+    saveTranscriptsMetadata();
+  }
+  
+  return true;
+}
+
+function saveTranscriptsMetadata() {
+  try {
+    fs.writeFileSync(
+      transcriptsMetadataPath, 
+      JSON.stringify({ transcripts: transcriptsMetadata }, null, 2), 
+      'utf8'
+    );
+  } catch (err) {
+    console.error('Error saving transcript metadata:', err);
+  }
+}
 
 // Utility to create a unique session ID
 function generateSessionId() {
@@ -86,6 +192,15 @@ function handleJoinSession(sessionId, ws) {
   
   console.log(`Client joined session: ${sessionId}`);
   
+  // Create transcript for this session if not already created
+  const transcriptExists = transcriptsMetadata.some(t => t.id === sessionId);
+  if (!transcriptExists) {
+    createTranscript(sessionId, session);
+  }
+  
+  // Record connection in transcript
+  appendToTranscript(sessionId, 'SYSTEM', 'Client connected to session');
+  
   // Attach this WebSocket to the session
   session.websockets = session.websockets || [];
   session.websockets.push(ws);
@@ -105,6 +220,58 @@ function handleJoinSession(sessionId, ws) {
   }
 }
 
+// Helper function to detect if session is in a REPL environment
+function detectReplEnvironment(sessionId, output) {
+  // Check for common REPL prompts
+  if (output.includes('>>> ') || output.includes('... ')) {
+    // Python REPL
+    replEnvironments.set(sessionId, 'python');
+    return true;
+  } 
+  else if (output.includes('> ') && (output.includes('node') || output.match(/js>\s*$/))) {
+    // Node.js REPL
+    replEnvironments.set(sessionId, 'node');
+    return true;
+  }
+  else if (output.match(/irb\([0-9:]+\)[>*]\s*$/)) {
+    // Ruby IRB
+    replEnvironments.set(sessionId, 'ruby');
+    return true;
+  }
+  else if (output.match(/scala>\s*$/)) {
+    // Scala REPL
+    replEnvironments.set(sessionId, 'scala');
+    return true;
+  }
+  else if (output.match(/ghci>\s*$/)) {
+    // Haskell GHCi
+    replEnvironments.set(sessionId, 'haskell');
+    return true;
+  }
+  // Detect any interactive environments with command suggestions or box displays
+  else if (output.includes('╭') && output.includes('╰')) {
+    // Any command suggestion interface or interactive prompt with box characters
+    replEnvironments.set(sessionId, 'interactive');
+    console.log(`Detected interactive interface for session ${sessionId}`);
+    return true;
+  }
+  
+  // Reset REPL state if we detect shell prompt
+  if (output.match(/[$#%>]\s*$/) || output.match(/[a-z]+@[a-z0-9\-\.]+:[~\/][^\s\n]*[$#%]/i)) {
+    // But only if we're not in a clearly identified REPL
+    const currentType = replEnvironments.get(sessionId);
+    if (currentType !== 'python' && currentType !== 'node' && 
+        currentType !== 'ruby' && currentType !== 'scala' && 
+        currentType !== 'haskell') {
+      replEnvironments.delete(sessionId);
+      return false;
+    }
+  }
+  
+  // Continue with current detection state
+  return replEnvironments.has(sessionId);
+}
+
 // Handle terminal input
 function handleTerminalInput(sessionId, data, ws) {
   const session = sessions.get(sessionId);
@@ -114,6 +281,105 @@ function handleTerminalInput(sessionId, data, ws) {
   }
   
   try {
+    // Initialize command buffer for session if needed
+    if (!commandBuffers.has(sessionId)) {
+      commandBuffers.set(sessionId, '');
+    }
+    
+    // Check if this session is in a REPL environment
+    const isReplEnvironment = replEnvironments.has(sessionId);
+    
+    // Get the current buffer
+    let currentBuffer = commandBuffers.get(sessionId);
+    
+    // Check if Enter key is detected
+    const hasEnterKey = data.includes('\r') || data.includes('\n');
+    
+    // If this is a REPL environment, we use a different approach:
+    // We collect all keystrokes in the buffer but NEVER record them
+    // until an Enter key is pressed
+    if (isReplEnvironment) {
+      // For REPL environments, accumulate keystrokes but don't record anything yet
+      
+      // This is the key insight: Only add to the transcript when Enter is pressed
+      if (hasEnterKey) {
+        // Split the data by newline to handle the part before Enter
+        const parts = data.split(/[\r\n]/);
+        if (parts[0]) {
+          currentBuffer += parts[0];
+        }
+        
+        // If we have a non-empty command, record it now
+        if (currentBuffer.trim()) {
+          // Record the complete REPL command and log it
+          console.log(`Recording complete REPL command: [${currentBuffer.trim()}]`);
+          appendToTranscript(sessionId, 'REPL_COMMAND', currentBuffer.trim());
+          
+          // Set a flag indicating we just recorded a command - prevents duplicate recording
+          pendingCommands.set(sessionId, false);
+        }
+        
+        // Reset buffer for next command, keeping any text after the Enter
+        commandBuffers.set(sessionId, parts[1] || '');
+      }
+      // Handle backspace by removing the last character from buffer
+      else if (data === '\b' || data === '\x7f') {
+        if (currentBuffer.length > 0) {
+          // Remove last character
+          currentBuffer = currentBuffer.slice(0, -1);
+          commandBuffers.set(sessionId, currentBuffer);
+        }
+      }
+      // For regular keystrokes, just add to buffer without recording
+      else {
+        // Add keystroke to buffer
+        currentBuffer += data;
+        commandBuffers.set(sessionId, currentBuffer);
+        
+        // Set a pending flag to indicate we're collecting keystrokes
+        pendingCommands.set(sessionId, true);
+      }
+    } 
+    // Regular shell handling (non-REPL environment)
+    else {
+      // For shell commands, we also collect until Enter key is pressed
+      if (hasEnterKey) {
+        // Get any content before the Enter key
+        const parts = data.split(/[\r\n]/);
+        if (parts[0]) {
+          currentBuffer += parts[0];
+        }
+        
+        // If we have a non-empty command, record it
+        if (currentBuffer.trim()) {
+          console.log(`Recording complete shell command: [${currentBuffer.trim()}]`);
+          appendToTranscript(sessionId, 'COMMAND', currentBuffer.trim());
+          
+          // Clear pending flag
+          pendingCommands.set(sessionId, false);
+        }
+        
+        // Reset buffer for next command
+        commandBuffers.set(sessionId, parts[1] || '');
+      } 
+      // Handle backspace
+      else if (data === '\b' || data === '\x7f') {
+        if (currentBuffer.length > 0) {
+          currentBuffer = currentBuffer.slice(0, -1);
+          commandBuffers.set(sessionId, currentBuffer);
+        }
+      }
+      // Regular keystroke
+      else {
+        currentBuffer += data;
+        commandBuffers.set(sessionId, currentBuffer);
+        
+        // Set pending flag
+        pendingCommands.set(sessionId, true); 
+      }
+    }
+    
+    // Send to terminal
     session.stream.write(data);
   } catch (err) {
     console.error('Error writing to SSH stream:', err);
@@ -198,6 +464,12 @@ function createSshConnection(sessionId, ws) {
       stream.on('data', (data) => {
         const output = data.toString('utf-8');
         
+        // Detect if we are in a REPL environment based on output patterns
+        detectReplEnvironment(sessionId, output);
+        
+        // Record output to transcript
+        appendToTranscript(sessionId, 'OUTPUT', output);
+        
         // Store in buffer (with size limit)
         session.outputBuffer += output;
         if (session.outputBuffer.length > MAX_BUFFER_SIZE) {
@@ -211,10 +483,18 @@ function createSshConnection(sessionId, ws) {
       });
       
       stream.stderr.on('data', (data) => {
-        broadcastToSession(sessionId, 'error', data.toString('utf-8'));
+        const errorText = data.toString('utf-8');
+        
+        // Record error to transcript
+        appendToTranscript(sessionId, 'ERROR', errorText);
+        
+        broadcastToSession(sessionId, 'error', errorText);
       });
       
       stream.on('close', () => {
+        // Record session closure in transcript
+        appendToTranscript(sessionId, 'SYSTEM', 'Terminal session closed');
+        
         broadcastToSession(sessionId, 'closed');
         cleanupSession(sessionId);
       });
@@ -250,7 +530,8 @@ function createDemoTerminal(sessionId, ws) {
   const stream = new EventEmitter();
   
   // Add methods to make it behave like a stream
-  stream.write = (data) => {
+   stream.stderr = new EventEmitter(); // Add stderr emitter
+   stream.write = (data) => {
     console.log(`Demo terminal received: ${data}`);
     
     // Echo back what was typed, simulating a terminal
@@ -260,26 +541,83 @@ function createDemoTerminal(sessionId, ws) {
       
       // Wait a bit before responding
       setTimeout(() => {
-        if (command.startsWith('ls')) {
+        if (command === 'python' || command === 'node') {
+          // Enter REPL mode
+          replEnvironments.set(sessionId, command);
+          
+          if (command === 'python') {
+            stream.emit('data', '\r\nPython 3.9.5 (Demo Mode)\r\n>>> ');
+          } else if (command === 'node') {
+            stream.emit('data', '\r\nWelcome to Node.js v16.13.0 (Demo Mode)\r\n> ');
+          }
+        } 
+        else if (command === 'exit' && replEnvironments.has(sessionId)) {
+          // Exit REPL mode
+          const replType = replEnvironments.get(sessionId);
+          stream.emit('data', `\r\nExiting ${replType}...\r\n`);
+          replEnvironments.delete(sessionId);
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
+        }
+        else if (replEnvironments.has(sessionId)) {
+          // Handle REPL input
+          const replType = replEnvironments.get(sessionId);
+          
+          if (replType === 'python') {
+            if (command === 'print("hello")') {
+              stream.emit('data', '\r\nhello\r\n>>> ');
+            } else if (command.startsWith('for ')) {
+              stream.emit('data', '\r\n... ');
+            } else {
+              stream.emit('data', '\r\n>>> ');
+            }
+          } else if (replType === 'node') {
+            if (command === 'console.log("hello")') {
+              stream.emit('data', '\r\nhello\r\nundefined\r\n> ');
+            } else if (command.startsWith('function')) {
+              stream.emit('data', '\r\nundefined\r\n> ');
+            } else {
+              // Evaluate simple expressions
+              try {
+                let result = command;
+                if (command.match(/^[0-9+\-*/() ]+$/)) {
+                  // Simple arithmetic
+                  result = eval(command);
+                }
+                stream.emit('data', `\r\n${result}\r\n> `);
+              } catch {
+                stream.emit('data', '\r\n> ');
+              }
+            }
+          }
+        }
+        else if (command.startsWith('ls')) {
           stream.emit('data', '\r\nDEMO MODE - Simulated directory listing:\r\n');
           stream.emit('data', 'file1.txt  file2.txt  folder1/  folder2/\r\n');
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         } else if (command.startsWith('pwd')) {
           stream.emit('data', '\r\n/home/demo\r\n');
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         } else if (command.startsWith('whoami')) {
           stream.emit('data', '\r\ndemo-user\r\n');
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         } else if (command.startsWith('date')) {
           stream.emit('data', `\r\n${new Date().toString()}\r\n`);
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         } else if (command.startsWith('echo')) {
           stream.emit('data', `\r\n${command.substring(5)}\r\n`);
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         } else if (command.startsWith('help')) {
           stream.emit('data', '\r\nDEMO MODE - Available commands:\r\n');
-          stream.emit('data', 'ls, pwd, whoami, date, echo, help\r\n');
+          stream.emit('data', 'ls, pwd, whoami, date, echo, help, python, node\r\n');
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         } else if (command) {
           stream.emit('data', `\r\nCommand not found: ${command}\r\nType 'help' to see available commands.\r\n`);
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
+        } else {
+          // Just enter, show new prompt
+          stream.emit('data', '\r\ndemo@localhost:~$ ');
         }
         
-        // Display prompt
-        stream.emit('data', '\r\ndemo@localhost:~$ ');
       }, 300);
     } else {
       // Echo back characters as if typed in real terminal
@@ -309,11 +647,30 @@ function createDemoTerminal(sessionId, ws) {
       'demo@localhost:~$ ';
       
     session.outputBuffer += welcomeMessage;
+    // Log raw output for demo
+    appendToTranscript(sessionId, 'OUTPUT', welcomeMessage);
     broadcastToSession(sessionId, 'output', welcomeMessage);
   }, 500);
   
   // Setup event handlers
+   stream.on('data', (data) => {
+        const rawOutput = data.toString('utf-8');
+        appendToTranscript(sessionId, 'OUTPUT', rawOutput);
+        session.outputBuffer += rawOutput;
+        if (session.outputBuffer.length > 10000) { // Simple buffer limit for demo
+            session.outputBuffer = session.outputBuffer.slice(-10000);
+        }
+        broadcastToSession(sessionId, 'output', rawOutput);
+   });
+
+   stream.stderr.on('data', (data) => {
+        const rawError = data.toString('utf-8');
+        appendToTranscript(sessionId, 'ERROR', rawError);
+        broadcastToSession(sessionId, 'error', rawError);
+   });
+
   stream.on('close', () => {
+    appendToTranscript(sessionId, 'SYSTEM', 'Demo terminal closed');
     broadcastToSession(sessionId, 'closed');
     cleanupSession(sessionId);
   });
@@ -351,6 +708,37 @@ function cleanupSession(sessionId) {
   
   console.log(`Cleaning up session ${sessionId}`);
   
+  // Clean up command buffer if there's any pending command
+  if (commandBuffers.has(sessionId) && pendingCommands.get(sessionId)) {
+    const remainingBuffer = commandBuffers.get(sessionId);
+    
+    // If there's any buffered command input left, record it before cleaning up
+    if (remainingBuffer && remainingBuffer.trim()) {
+      // Check if we're in a REPL environment to determine command type
+      const isInRepl = replEnvironments.has(sessionId);
+      const eventType = isInRepl ? 'REPL_COMMAND' : 'COMMAND';
+      
+      // Mark as incomplete since the user didn't press Enter
+      console.log(`Recording incomplete ${eventType}: [${remainingBuffer.trim()}]`);
+      appendToTranscript(sessionId, eventType, remainingBuffer.trim() + ' (incomplete)');
+    }
+    
+    // Clear the command buffer
+    commandBuffers.delete(sessionId);
+  }
+  
+  // Clean up pending command flags
+  if (pendingCommands.has(sessionId)) {
+    pendingCommands.delete(sessionId);
+  }
+  
+  // Clean up REPL environment tracking
+  if (replEnvironments.has(sessionId)) {
+    const replType = replEnvironments.get(sessionId);
+    console.log(`Cleaning up REPL environment (${replType}) for session ${sessionId}`);
+    replEnvironments.delete(sessionId);
+  }
+  
   // Close SSH client if it exists
   if (session.client) {
     try {
@@ -370,7 +758,222 @@ function cleanupSession(sessionId) {
     }
     session.stream = null;
   }
+  // Remove session itself
+  sessions.delete(sessionId);
 }
+
+// API endpoint to list active sessions
+app.get('/api/sessions', (req, res) => {
+  try {
+    const { id } = req.query;
+    
+    // If ID is provided, return that specific session
+    if (id) {
+      const session = sessions.get(id);
+      
+      if (!session) {
+        // If session not found in memory, try to find in transcript metadata
+        console.log(`Session ${id} not found in active sessions, checking transcripts...`);
+        const transcript = transcriptsMetadata.find(t => t.id === id);
+        
+        if (transcript) {
+          console.log(`Found transcript for session ${id}, returning info for reconnection`);
+          // Return session info derived from transcript
+          return res.json({
+            success: true,
+            session: {
+              id: transcript.id,
+              host: transcript.host,
+              username: transcript.username,
+              createdAt: transcript.createdAt,
+              lastUpdatedAt: transcript.lastUpdatedAt,
+              active: false,
+              recovered: true
+            }
+          });
+        }
+        
+        return res.status(404).json({ success: false, error: 'Session not found' });
+      }
+      
+      const sessionInfo = {
+        id,
+        host: session.host,
+        username: session.username,
+        createdAt: session.createdAt || new Date().toISOString(),
+        active: !!session.stream
+      };
+      
+      return res.json({ success: true, session: sessionInfo });
+    }
+    
+    // Otherwise, return all sessions
+    const sessionList = Array.from(sessions.entries()).map(([id, session]) => {
+      return {
+        id,
+        host: session.host,
+        username: session.username,
+        createdAt: session.createdAt || new Date().toISOString(),
+        active: !!session.stream
+      };
+    });
+    
+    res.json({ success: true, sessions: sessionList });
+  } catch (error) {
+    console.error('Error listing sessions:', error);
+    res.status(500).json({ success: false, error: 'Failed to list sessions' });
+  }
+});
+
+// API endpoint to get transcripts
+// Function to process raw transcript content and return a clean version
+// focusing on commands entered and their corresponding output.
+function getCleanTranscriptContent(rawContent) {
+  if (!rawContent) return '';
+  
+  // Parse each line
+  const lines = rawContent.split('\n');
+  const cleanLines = [];
+  
+  // Track commands and outputs by timestamp
+  const eventsByTimestamp = new Map();
+  
+  // Pass 1: Collect relevant events (COMMAND, REPL_COMMAND, OUTPUT, ERROR, SYSTEM)
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || line.startsWith('#')) continue; // Skip empty lines and headers
+    
+    // Parse the line format: [timestamp] [type] content
+    const match = line.match(/^\[([^\]]+)\] \[([A-Z_]+)\] (.*)$/);
+    if (!match) continue;
+    
+    const [, timestamp, type, content] = match;
+    
+    // Ignore INPUT events completely
+    if (type === 'INPUT') {
+      continue;
+    }
+    
+    // Format the timestamp
+    const date = new Date(timestamp);
+    const formattedTimestamp = date.toLocaleString();
+    
+    // Initialize data structure for this timestamp if needed
+    if (!eventsByTimestamp.has(formattedTimestamp)) {
+      eventsByTimestamp.set(formattedTimestamp, []);
+    }
+    
+    // Add the relevant event
+    eventsByTimestamp.get(formattedTimestamp).push({ type, content });
+  }
+  
+  // Pass 2: Build the clean transcript
+  const timestamps = [...eventsByTimestamp.keys()].sort((a, b) => {
+    return new Date(a) - new Date(b);
+  });
+  
+  for (const timestamp of timestamps) {
+    const events = eventsByTimestamp.get(timestamp);
+    
+    if (events && events.length > 0) {
+      cleanLines.push(`[${timestamp}]`);
+      
+      for (const event of events) {
+        // Format commands with '$'
+        if (event.type === 'COMMAND' || event.type === 'REPL_COMMAND') {
+          const cleanCommand = event.content.replace(/\\r/g, '').replace(/\\n/g, '');
+          if (cleanCommand.trim()) {
+            cleanLines.push(`$ ${cleanCommand.trim()}`);
+          }
+        } 
+        // Display OUTPUT, ERROR, SYSTEM directly after cleaning
+        else if (event.type === 'OUTPUT' || event.type === 'ERROR' || event.type === 'SYSTEM') {
+          const cleanContent = event.content.replace(/\\r/g, '\r').replace(/\\n/g, '\n');
+          if (cleanContent.trim()) {
+            // Add type prefix for ERROR and SYSTEM for clarity
+            const prefix = (event.type === 'ERROR' || event.type === 'SYSTEM') ? `[${event.type}] ` : '';
+            cleanLines.push(prefix + cleanContent);
+          }
+        }
+      }
+      // Add blank line for readability between timestamp blocks
+      cleanLines.push(''); 
+    }
+  }
+  
+  // Join lines and trim any excess whitespace
+  return cleanLines.join('\n').trim();
+}
+
+app.get('/api/transcripts', (req, res) => {
+  try {
+    const { id, clean } = req.query;
+    
+    // If ID is provided, return that specific transcript content
+    if (id) {
+      const filePath = path.join(transcriptsDir, `${id}.log`);
+      
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'Transcript not found' });
+      }
+      
+      const rawContent = fs.readFileSync(filePath, 'utf8');
+      
+      // Use the formatter utility
+       try {
+           // Dynamically import the formatter
+          import('../utils/transcriptFormatter.js').then(formatterModule => {
+               const formattedContent = formatterModule.formatTranscript(rawContent);
+               return res.status(200).json({ content: formattedContent });
+          }).catch(importErr => {
+               console.error('Error importing/using transcript formatter:', importErr);
+               // Fallback gracefully if formatter fails
+               return res.status(200).json({ content: rawContent, warning: 'Formatter failed, showing raw content.' });
+           });
+       } catch (formatErr) {
+           console.error('Error in formatting logic:', formatErr);
+           return res.status(200).json({ content: rawContent, warning: 'Formatter error, showing raw content.' });
+       }
+       return; // Important: Prevent sending response twice due to async import
+    }
+    
+    // Otherwise, return all transcript metadata
+    return res.status(200).json({ transcripts: transcriptsMetadata });
+  } catch (error) {
+    console.error('Error retrieving transcripts:', error);
+    return res.status(500).json({ error: 'Failed to retrieve transcripts' });
+  }
+});
+
+// API endpoint to delete a transcript
+app.delete('/api/transcripts', (req, res) => {
+  try {
+    const { id } = req.query;
+    
+    if (!id) {
+      return res.status(400).json({ error: 'Transcript ID is required' });
+    }
+    
+    const filePath = path.join(transcriptsDir, `${id}.log`);
+    
+    // Delete file if exists
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    
+    // Remove from metadata
+    const index = transcriptsMetadata.findIndex(t => t.id === id);
+    if (index >= 0) {
+      transcriptsMetadata.splice(index, 1);
+      saveTranscriptsMetadata();
+    }
+    
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Error deleting transcript:', error);
+    return res.status(500).json({ error: 'Failed to delete transcript' });
+  }
+});
 
 // API endpoint to create a new session
 app.post('/api/sessions', (req, res) => {

@@ -1,0 +1,378 @@
+/* Terminal module styles */
+
+/* Transcript Modal Styles */
+.transcriptOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.transcriptModal {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 85%;
+  height: 85%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.transcriptHeader {
+  background-color: #1a202c;
+  color: white;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.transcriptHeader h2 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.transcriptControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.controlLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.controlLabel input {
+  cursor: pointer;
+}
+
+.liveButton {
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #4b5563;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.liveActive {
+  background-color: #10b981;
+}
+
+.closeButton {
+  padding: 4px 10px;
+  font-size: 14px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #dc2626;
+}
+
+.transcriptContent {
+  background-color: #000;
+  color: #4ade80;
+  font-family: 'Courier New', monospace;
+  padding: 16px;
+  overflow: auto;
+  flex-grow: 1;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Button Styles (General - might be replaced by Tailwind) */
+.actionButton {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.primaryButton:hover {
+  background-color: #2563eb;
+}
+
+.successButton {
+  background-color: #10b981;
+  color: white;
+}
+
+.successButton:hover {
+  background-color: #059669;
+}
+
+.dangerButton {
+  background-color: #ef4444;
+  color: white;
+}
+
+.dangerButton:hover {
+  background-color: #dc2626;
+}
+
+/* Loading indicator (might be replaced by Tailwind) */
+.loadingIndicator {
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.loadingIndicator:after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Standard Form Input Styles (Helper classes) */
+.formInputStd,
+.formSelectStd,
+.formTextareaStd {
+  width: 100%;
+  padding: 0.5rem; /* py-2 px-3 */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.25rem;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.formInputStd:focus,
+.formSelectStd:focus,
+.formTextareaStd:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: #3b82f6; /* focus:border-blue-500 */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* focus:ring-blue-500/50 */
+}
+
+.formInputStd:disabled,
+.formSelectStd:disabled,
+.formTextareaStd:disabled {
+  background-color: #f3f4f6; /* bg-gray-100 */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.formTextareaStd {
+  font-family: monospace;
+  white-space: pre;
+}
+
+.formSelectStd {
+  height: 2.5rem; /* Match input height (approx h-10) */
+  padding-right: 2.5rem; /* Space for dropdown arrow */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Container class for when layouts are active */
+.layoutActive {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Split View Layout Styles */
+.splitLayoutMain {
+  display: flex;
+  height: 100vh; /* Fill viewport height */
+  background-color: #374151; /* bg-gray-700 */
+}
+
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Take remaining width */
+  min-width: 0; /* Allow shrinking if needed, good practice */
+  height: 100%;
+}
+
+.rightPanel {
+  width: 500px; /* Fixed width */
+  flex-shrink: 0; /* Prevent shrinking */
+  height: calc(100vh - 2px); /* Full viewport height minus borders */
+  display: block; /* Use simpler layout */
+  background-color: #1f2937; /* bg-gray-800 - Darker for terminal */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.topLeftPanel {
+  /* height: 75%; <-- REMOVED */
+  flex-grow: 1; /* Let this take up remaining vertical space */
+  min-height: 0; /* Allow shrinking */
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafb; /* bg-gray-50 */
+  overflow: hidden;
+}
+
+.bottomLeftPanel {
+  height: 300px; /* Fixed height */
+  flex-shrink: 0; /* Prevent shrinking */
+  display: flex; /* Make this a flex container */
+  flex-direction: column; /* Stack children vertically */
+  background-color: #1f2937; /* bg-gray-800 - Darker for terminal */
+  min-height: 0; /* Still good practice */
+  overflow: hidden; /* Clip content */
+}
+
+
+/* Browser Panel Styles */
+.browserPanel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.urlForm {
+  display: flex;
+  padding: 6px;
+  background-color: #e5e7eb; /* bg-gray-200 */
+  border-bottom: 1px solid #d1d5db; /* border-gray-300 */
+  flex-shrink: 0;
+}
+
+.urlInput {
+  flex-grow: 1;
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px 0 0 4px;
+  font-size: 13px;
+  outline: none;
+}
+.urlInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.loadButton {
+  padding: 4px 10px;
+  background-color: #3b82f6;
+  color: white;
+  border: 1px solid #3b82f6;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+.loadButton:hover {
+  background-color: #2563eb;
+}
+
+.iframe {
+  flex-grow: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Terminal wrapper adjustments */
+.terminalWrapper {
+  display: flex;
+  flex-direction: column;
+  /* height: 100%; /* REMOVED - Let flexbox handle this? */
+  min-height: 0; /* Allow wrapper to shrink */
+  overflow: hidden;
+  background-color: #000; /* Ensure terminal background is black */
+  flex-grow: 1; /* ADDED - Allow wrapper to grow */
+}
+
+/* The container directly wrapping TerminalComponent */
+.terminalInstanceContainer {
+  flex-grow: 1; /* Take remaining space after header */
+  overflow: hidden; /* Clip terminal content */
+  position: relative; /* Keep for xterm positioning */
+  /* height: 100% was likely not needed here */
+}
+
+/* Target the actual xterm container specifically if needed */
+.terminalWrapper .xterm {
+  height: 100%; /* Force xterm element itself to fill container height */
+}
+
+.terminalHeader {
+  flex-shrink: 0; /* Prevent header shrinking */
+  background-color: #374151; /* Match split view bg */
+  padding: 4px 8px; /* Adjust padding */
+}
+
+.terminalHeader button {
+  line-height: 1; /* Align text */
+}
+
+/* Ensure standard layout's main content area grows */
+.standardLayoutMain {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow main to grow */
+  min-height: 0; /* Prevent main from overflowing its container if content is large */
+}
+
+/* Target the specific div wrapping renderTerminal in standard layout */
+.standardLayoutMain > .terminalContainerDiv {
+  flex-grow: 1;
+  min-height: 0; /* Allow the container to shrink if needed but grow */
+  display: flex; /* Use flex to make terminalWrapper fill it */
+  flex-direction: column;
+}

@@ -1,0 +1,37 @@
+# Terminal Transcript
+# Session ID: ad1cb3e5e4620a908e227e9eb99e323c
+# Host: 85.31.234.214
+# User: vibe
+# Started: 2025-04-07T19:41:57.547Z
+
+[2025-04-07T19:41:57.548Z] [SYSTEM] Client connected to session
+[2025-04-07T19:41:58.489Z] [OUTPUT] Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-55-generic x86_64)\r\n\r\n * Documentation:  https://help.ubuntu.com\r\n * Management:     https://landscape.canonical.com\r\n * Support:        https://ubuntu.com/pro\r\n\r\n System information as of Mon Apr  7 19:41:58 UTC 2025\r\n\r\n  System load:  0.0                Processes:             176\r\n  Usage of /:   4.5% of 192.69GB   Users logged in:       1\r\n  Memory usage: 15%                IPv4 address for eth0: 85.31.234.214\r\n  Swap usage:   0%                 IPv6 address for eth0: 2a02:4780:10:1fbf::1\r\n\r\n  => There is 1 zombie process.\r\n\r\n * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\nExpanded Security Maintenance for Applications is not enabled.\r\n\r\n34 updates can be applied immediately.\r\nTo see these additional updates run: apt list --upgradable\r\n\r\n8 additional security updates can be applied with ESM Apps.\r\nLearn more about enabling ESM Apps service at https://ubuntu.com/esm\r\n\r\n\r\n*** System restart required ***\r\nLast login: Mon Apr  7 19:41:58 2025 from 108.247.126.167\r\r\n
+[2025-04-07T19:41:58.541Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-04-07T19:42:00.760Z] [OUTPUT] l
+[2025-04-07T19:42:00.834Z] [OUTPUT] s
+[2025-04-07T19:42:03.397Z] [OUTPUT] l
+[2025-04-07T19:42:03.486Z] [OUTPUT] s
+[2025-04-07T19:42:03.610Z] [COMMAND] lsls
+[2025-04-07T19:42:03.639Z] [OUTPUT] \r\n[?2004l\r
+[2025-04-07T19:42:04.495Z] [OUTPUT] Command 'lsls' not found, did you mean:\r\n  command 'lsns' from deb util-linux (2.39.3-9ubuntu6.2)\r\nTry: sudo apt install <deb name>\r\n
+[2025-04-07T19:42:04.508Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-04-07T19:42:04.538Z] [OUTPUT] l
+[2025-04-07T19:42:04.633Z] [OUTPUT] s
+[2025-04-07T19:42:04.765Z] [COMMAND] ls
+[2025-04-07T19:42:04.796Z] [OUTPUT] \r\n[?2004l\r
+[2025-04-07T19:42:04.799Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-04-07T19:42:04.800Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-04-07T19:42:08.606Z] [OUTPUT]  
+[2025-04-07T19:42:14.379Z] [OUTPUT] l
+[2025-04-07T19:42:14.484Z] [OUTPUT] s
+[2025-04-07T19:42:14.607Z] [COMMAND] ls
+[2025-04-07T19:42:14.638Z] [OUTPUT] \r\n[?2004l\r
+[2025-04-07T19:42:14.644Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-04-07T19:42:14.645Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-04-07T19:42:15.100Z] [OUTPUT] l
+[2025-04-07T19:42:15.160Z] [OUTPUT] s
+[2025-04-07T19:42:15.296Z] [COMMAND] ls
+[2025-04-07T19:42:15.325Z] [OUTPUT] \r\n[?2004l\r
+[2025-04-07T19:42:15.329Z] [OUTPUT] [0m[01;34mDownloads[0m            [01;31mgoogle-chrome-stable_current_amd64.deb[0m  [01;34mprojects[0m  [01;34mxpra[0m\r\n[01;34mcursor-setup-wizard[0m  npm-global-packages.txt                 wget-log\r\n
+[2025-04-07T19:42:15.330Z] [OUTPUT] [?2004hvibe@srv757028:~$ 
+[2025-04-07T19:44:57.603Z] [SYSTEM] Terminal session closed

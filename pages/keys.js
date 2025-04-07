@@ -167,9 +167,19 @@ export default function KeysPage() {
                   <textarea
                     value={privateKey}
                     onChange={(e) => setPrivateKey(e.target.value)}
-                    className="w-full p-2 border rounded-md font-mono text-sm"
-                    rows={8}
+                    onPaste={(e) => {
+                      // Ensure the pasted content is properly captured
+                      const pastedText = e.clipboardData.getData('text');
+                      if (pastedText) {
+                        e.preventDefault();
+                        setPrivateKey(pastedText);
+                      }
+                    }}
+                    className="w-full p-2 border rounded-md font-mono text-sm whitespace-pre"
+                    rows={12}
                     placeholder="-----BEGIN RSA PRIVATE KEY-----..."
+                    spellCheck="false"
+                    autoComplete="off"
                     required
                   ></textarea>
                   <p className="mt-1 text-xs text-gray-500">
