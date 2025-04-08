@@ -38,3 +38,6 @@ next-env.d.ts
 
 # Session data
 ssh_sessions.json
+
+# Terminal transcripts
+transcripts/

@@ -18,3 +18,5 @@ a {
 * {
   box-sizing: border-box;
 }
+
+/* Remove custom XTerm styling as we're using the wrapper approach */

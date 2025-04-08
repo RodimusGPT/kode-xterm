@@ -14,6 +14,9 @@ if (!fs.existsSync(transcriptsDir)) {
   fs.mkdirSync(transcriptsDir, { recursive: true });
 }
 
+// Import file listing logic (ensure correct path)
+const listFilesHandler = require('../pages/api/files/list').default; // Assuming ES module default export
+
 // Track transcript metadata
 let transcriptsMetadata = [];
 const transcriptsMetadataPath = path.join(__dirname, '..', 'terminal_transcripts.json');
@@ -1051,6 +1054,19 @@ app.delete('/api/sessions/:sessionId', (req, res) => {
   } catch (error) {
     console.error('Error deleting session:', error);
     return res.status(500).json({ error: 'Failed to delete session' });
+  }
+});
+
+// NEW: API endpoint to list files in a session
+app.get('/api/files/list', async (req, res) => {
+  try {
+    // Re-use the logic from pages/api/files/list.js by calling the handler
+    await listFilesHandler(req, res);
+  } catch (error) {
+    console.error('[Express /api/files/list] Error:', error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Internal server error handling file list request' });
+    }
   }
 });
 

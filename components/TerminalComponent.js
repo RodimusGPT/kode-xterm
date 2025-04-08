@@ -1,5 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 
+// Simple debounce utility
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 export default function TerminalComponent({ sessionId, onSessionClose, panelId }) {
   const terminalRef = useRef(null);
   const terminalContainerRef = useRef(null);
@@ -8,28 +21,39 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
   const [isTerminalReady, setIsTerminalReady] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
-
-  // Maybe set isTerminalReady in forceResize after a successful fit?
-  // Let's modify forceResize slightly:
+  
+  // Define forceResize BEFORE using it in debounce
   const forceResize = () => {
-    if (fitAddonRef.current && terminalRef.current && terminalContainerRef.current) {
-      console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: forceResize executing`); // Log entry
+     if (fitAddonRef.current && terminalRef.current && terminalContainerRef.current) {
+      console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Debounced forceResize executing`); // Log entry
       try {
         if (terminalContainerRef.current.clientHeight > 0 &&
             terminalContainerRef.current.clientWidth > 0) {
-          console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Container has dimensions (${terminalContainerRef.current.clientWidth}x${terminalContainerRef.current.clientHeight}), fitting...`); // Log fit attempt
+          console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Container has dimensions (${terminalContainerRef.current.clientWidth}x${terminalContainerRef.current.clientHeight}), fitting...`);
           fitAddonRef.current.fit();
+          console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Initial fit complete. Tentative size: ${terminalRef.current.cols}x${terminalRef.current.rows}`);
+
+          // --- Manual Row Calculation Override ---
+          const term = terminalRef.current;
+          const container = terminalContainerRef.current;
+          if (term.renderer?.dimensions?.actualCellHeight > 0) {
+              const containerHeight = container.clientHeight;
+              const effectiveHeight = containerHeight;
+              const cellHeight = term.renderer.dimensions.actualCellHeight;
+              const calculatedRows = Math.floor(effectiveHeight / cellHeight);
+              console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Post-fit check. ContainerH: ${containerHeight}, CellH: ${cellHeight}, FitRows: ${term.rows}, CalcRows: ${calculatedRows}`);
+              if (term.rows !== calculatedRows && calculatedRows > 0) {
+                  console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Row mismatch detected. Resizing to ${term.cols}x${calculatedRows}`);
+                  term.resize(term.cols, calculatedRows);
+                  // REMOVED aggressive scroll reset here
+              }
+          } else {
+            console.warn(`TerminalComponent [${sessionId?.substring(0,4)}]: Could not get cell height for manual row calculation.`);
+          }
+          // --- End Manual Row Calculation ---
+
           terminalRef.current.scrollToBottom();
-          console.log(`TerminalComponent [${sessionId?.substring(0,4)}]: Fit and scroll complete. New size: ${terminalRef.current.cols}x${terminalRef.current.rows}`); // Log success
-          setIsTerminalReady(true); // Set ready after successful fit
-          // Optionally send resize to server again, though might be redundant
-          // if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          //   wsRef.current.send(JSON.stringify({
-          //     type: 'resize',
-          //     cols: terminalRef.current.cols,
-          //     rows: terminalRef.current.rows
-          //   }));
-          // }
+          setIsTerminalReady(true);
         } else {
            console.log('TerminalComponent: Container has no dimensions, skipping force fit');
         }
@@ -41,7 +65,18 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
     }
   };
 
+  const debouncedForceResize = useRef(debounce(forceResize, 50)).current; // Debounce by 50ms
 
+
+  // Maybe set isTerminalReady in forceResize after a successful fit?
+  // Let's modify forceResize slightly:
+  /* // Original forceResize definition moved up and modified
+  const forceResize = () => {
+    // ... content moved up ...
+  };
+  */
+
+  
   // Initialize terminal when component mounts or when sessionId changes
   useEffect(() => {
     console.log(`TerminalComponent: sessionId changed to ${sessionId}, panelId: ${panelId || 'unknown'}`);
@@ -263,6 +298,7 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
       const { Terminal } = await import('xterm');
       const { FitAddon } = await import('xterm-addon-fit');
       await import('xterm/css/xterm.css');
+      
 
       // Clear previous terminal instance
       if (terminalRef.current) {
@@ -282,7 +318,10 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
         fontSize: 14,
         lineHeight: 1.2,
         cols: 80, // Default columns
-        rows: 24  // Default rows
+        rows: 24,  // Default rows
+        scrollback: 5000,
+        allowProposedApi: true // Add this to use proposed APIs
+        // padding: 10 // Temporarily removed
       });
       
       const fitAddon = new FitAddon();
@@ -295,13 +334,9 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
       terminalRef.current = term;
       fitAddonRef.current = fitAddon;
       
-      // REMOVE initial fit setTimeout block entirely
-      /*
-      setTimeout(() => {
-         // ... old fit logic ...
-         // setIsTerminalReady(true); // Don't set ready here anymore
-      }, 150);
-      */
+      // Perform an initial fit AFTER the ResizeObserver is set up and WebSocket might have connected.
+      // Let the observer handle the initial fit.
+      // setTimeout(() => { ... initial fit logic ... }, 100);
 
       // Set terminal ready state maybe after websocket connects or first resize happens?
       // For simplicity now, let's assume connection implies readiness for interaction.
@@ -369,7 +404,7 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
       <div 
         ref={terminalContainerRef}
         className="w-full bg-black flex-grow"
-        style={{ position: 'relative', height: '100%' }} // Added explicit height
+        style={{ position: 'relative', height: '100%' }}
       />
       
       {/* Status bar removed per user request */}

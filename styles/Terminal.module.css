@@ -231,33 +231,42 @@
   overflow: hidden;
 }
 
-/* Split View Layout Styles */
-.splitLayoutMain {
+
+/* --- NEW THREE PANEL LAYOUT STYLES --- */
+
+/* Main container for the 3 columns (Files | Middle | Terminal B) */
+.threePanelLayoutMain {
   display: flex;
   height: 100vh; /* Fill viewport height */
   background-color: #374151; /* bg-gray-700 */
+  overflow: hidden; /* Prevent scrollbars on main container */
 }
 
-.leftPanel {
+/* Left Panel: File Explorer */
+.leftPanelFiles {
+  width: 250px; /* Fixed width */
+  flex-shrink: 0; /* Prevent shrinking */
+  height: 100vh;
+  background-color: #f9fafb; /* Light background for contrast */
+  overflow-y: auto;
+  border-right: 1px solid #d1d5db; /* border-gray-300 */
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Take remaining width */
-  min-width: 0; /* Allow shrinking if needed, good practice */
-  height: 100%;
 }
 
-.rightPanel {
-  width: 500px; /* Fixed width */
-  flex-shrink: 0; /* Prevent shrinking */
-  height: calc(100vh - 2px); /* Full viewport height minus borders */
-  display: block; /* Use simpler layout */
-  background-color: #1f2937; /* bg-gray-800 - Darker for terminal */
-  overflow: hidden; /* Prevent overflow */
+/* Middle Panel Container (Browser + Terminal A) */
+.middlePanelContainer {
+  display: flex;
+  flex-direction: column; /* Stack Browser over Terminal A */
+  flex-grow: 1; /* Take remaining flexible width */
+  min-width: 0; /* Allow shrinking */
+  height: 100vh; /* Full height */
+  overflow: hidden; /* Clip content */
 }
 
-.topLeftPanel {
-  /* height: 75%; <-- REMOVED */
-  flex-grow: 1; /* Let this take up remaining vertical space */
+/* Middle Panel: Browser Area (Top) */
+.middlePanelBrowser {
+  flex-grow: 1; /* Take available space above Terminal A */
   min-height: 0; /* Allow shrinking */
   display: flex;
   flex-direction: column;
@@ -265,16 +274,44 @@
   overflow: hidden;
 }
 
-.bottomLeftPanel {
+/* Middle Panel: Terminal A Area (Bottom) */
+.middlePanelTerminalA {
   height: 300px; /* Fixed height */
   flex-shrink: 0; /* Prevent shrinking */
-  display: flex; /* Make this a flex container */
-  flex-direction: column; /* Stack children vertically */
-  background-color: #1f2937; /* bg-gray-800 - Darker for terminal */
-  min-height: 0; /* Still good practice */
-  overflow: hidden; /* Clip content */
+  display: flex; /* To make terminalWrapper inside fill */
+  flex-direction: column;
+  background-color: #1f2937; /* bg-gray-800 */
+  border-top: 1px solid #4b5563; /* Separator */
+  box-sizing: border-box; /* Added */
+  /* border: 2px solid red !important; DEBUG BORDER REMOVED */
 }
 
+/* Right Panel: Terminal B */
+.rightPanelTerminalB {
+  width: 500px; /* Fixed width - adjust as needed */
+  flex-shrink: 0; /* Prevent shrinking */
+  height: 100vh;
+  display: flex; /* To make terminalWrapper inside fill */
+  flex-direction: column;
+  background-color: #111827; /* Darker */
+  border-left: 1px solid #4b5563; /* Separator */
+  box-sizing: border-box; /* Added */
+  /* border: 2px solid red !important; DEBUG BORDER REMOVED */
+}
+
+/* Target the actual xterm element within Terminal A for debugging */
+.middlePanelTerminalA .xterm {
+   border: 2px solid yellow !important; /* DEBUG BORDER - Inner Terminal (Yellow) */
+   box-sizing: border-box;
+}
+
+/* --- End NEW THREE PANEL LAYOUT STYLES --- */
+
+/* Remove old styles if they conflict */
+/* .leftPanel { ... } */
+/* .rightPanel { ... } */
+/* .topLeftPanel { ... } */
+/* .bottomLeftPanel { ... } */
 
 /* Browser Panel Styles */
 .browserPanel {
@@ -324,7 +361,7 @@
   flex-grow: 1;
   border: none;
   width: 100%;
-  height: 100%;
+  /* Removed height: 100%; Rely on flex-grow */
 }
 
 /* Terminal wrapper adjustments */
@@ -346,10 +383,7 @@
   /* height: 100% was likely not needed here */
 }
 
-/* Target the actual xterm container specifically if needed */
-.terminalWrapper .xterm {
-  height: 100%; /* Force xterm element itself to fill container height */
-}
+/* Target the actual xterm container specifically if needed (Rule removed) */
 
 .terminalHeader {
   flex-shrink: 0; /* Prevent header shrinking */

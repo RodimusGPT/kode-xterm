@@ -25,6 +25,7 @@
     "next": "^15.2.4",
     "postcss": "^8.4.24",
     "react": "^18.2.0",
+    "react-complex-tree": "^2.6.0",
     "react-dom": "^18.2.0",
     "redis": "^4.7.0",
     "socket.io": "^4.7.2",

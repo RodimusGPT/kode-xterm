@@ -8,14 +8,24 @@ import dynamic from 'next/dynamic';
 import styles from '../styles/Terminal.module.css';
 import { formatTranscript } from '../utils/transcriptFormatter';
 
+// New Imports for File Explorer
+import { Tree, TreeItem, TreeItemIndex } from 'react-complex-tree';
+import 'react-complex-tree/lib/style-modern.css';
+
 // Dynamically import Terminal with no SSR
 const TerminalComponent = dynamic(
   () => import('../components/TerminalComponent'),
   { ssr: false }
 );
 
+// Dynamically import FileExplorer with no SSR (assuming it uses browser APIs)
+const FileExplorer = dynamic(
+  () => import('../components/FileExplorer'),
+  { ssr: false }
+);
+
 // Simple IFrame component for the browser panel
-const BrowserPanel = ({ initialUrl = 'https://example.com/' }) => { // Changed default URL
+const BrowserPanel = ({ initialUrl = 'https://example.com/' }) => {
   const [url, setUrl] = useState(initialUrl);
   const [inputValue, setInputValue] = useState(initialUrl);
   const iframeRef = useRef(null);
@@ -207,17 +217,17 @@ export default function TerminalPage() {
     };
 
     try {
-      // --- Attempt First Connection --- 
+      // --- Attempt First Connection ---
       const firstSessionId = await establishSession(currentCredentials);
       setPrimarySessionId(firstSessionId);
 
-      // --- Handle Based on Layout Choice --- 
+      // --- Handle Based on Layout Choice ---
       if (layoutChoice === 'standard') {
         console.log('[handleConnect] Standard layout chosen. Setting stage to standardLayout.');
         setStage('standardLayout');
       } else {
-        // --- Attempt Second Connection for Split View --- 
-        console.log('[handleConnect] Split layout chosen. Attempting second connection...'); 
+        // --- Attempt Second Connection for Split View ---
+        console.log('[handleConnect] Split layout chosen. Attempting second connection...');
         try {
           const secondSessionId = await establishSession(currentCredentials);
           console.log('[handleConnect] Second session established:', secondSessionId);
@@ -513,9 +523,9 @@ export default function TerminalPage() {
                  {transcriptLoading && currentTranscriptSessionId.current === targetSessionId ? '...' : 'Log'}
                </button>
                {layoutChoice === 'standard' && (
-                 <button 
-                   onClick={() => disconnectFromServer(targetSessionId)} 
-                   className="bg-red-600 text-white px-1.5 py-0.5 rounded text-xs hover:bg-red-700" 
+                 <button
+                   onClick={() => disconnectFromServer(targetSessionId)}
+                   className="bg-red-600 text-white px-1.5 py-0.5 rounded text-xs hover:bg-red-700"
                    title="Disconnect Session"
                   > X </button>
                )}
@@ -563,23 +573,25 @@ export default function TerminalPage() {
       )}
 
       {stage === 'splitLayout' && primarySessionId && secondarySessionId && (
-        <main className={styles.splitLayoutMain}>
-          <div className={styles.leftPanel}>
-            <div className={styles.topLeftPanel}>
+        <main className={styles.threePanelLayoutMain}> {/* New class name */}
+          {/* Left Panel: File Explorer */}
+          <div className={styles.leftPanelFiles}>
+            <FileExplorer sessionId={primarySessionId} />
+          </div>
+
+          {/* Middle Panel: Browser over Terminal A */}
+          <div className={styles.middlePanelContainer}>
+            <div className={styles.middlePanelBrowser}>
               <BrowserPanel />
             </div>
-            <div className={styles.bottomLeftPanel}>
-              {renderTerminal(primarySessionId, 'A2')} {/* Assign primary to A2 */} 
+            <div className={styles.middlePanelTerminalA}>
+              {renderTerminal(primarySessionId, 'A')}
             </div>
           </div>
-          <div className={styles.rightPanel}>
-            <div style={{ 
-              height: '100%', /* Fill parent completely */
-              display: 'flex',
-              flexDirection: 'column',
-            }}>
-              {renderTerminal(secondarySessionId, 'B')} {/* Assign secondary to B */}
-            </div>
+
+          {/* Right Panel: Terminal B */}
+          <div className={styles.rightPanelTerminalB}>
+            {renderTerminal(secondarySessionId, 'B')}
           </div>
         </main>
       )}
@@ -603,4 +615,4 @@ export default function TerminalPage() {
 
     </div>
   );
-} // <-- ENSURE THIS CLOSING BRACE IS PRESENT
+}
