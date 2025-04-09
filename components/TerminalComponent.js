@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 
 // Simple debounce utility
 function debounce(func, wait) {
@@ -37,7 +37,7 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
           const term = terminalRef.current;
           const container = terminalContainerRef.current;
           if (term.renderer?.dimensions?.actualCellHeight > 0) {
-              const containerHeight = container.clientHeight;
+              const containerHeight = container.getBoundingClientRect().height; // Use getBoundingClientRect
               const effectiveHeight = containerHeight;
               const cellHeight = term.renderer.dimensions.actualCellHeight;
               const calculatedRows = Math.floor(effectiveHeight / cellHeight);
@@ -65,7 +65,7 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
     }
   };
 
-  const debouncedForceResize = useRef(debounce(forceResize, 50)).current; // Debounce by 50ms
+  const debouncedForceResize = useRef(debounce(forceResize, 150)).current; // Debounce by 150ms
 
 
   // Maybe set isTerminalReady in forceResize after a successful fit?
@@ -320,8 +320,8 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
         cols: 80, // Default columns
         rows: 24,  // Default rows
         scrollback: 5000,
-        allowProposedApi: true // Add this to use proposed APIs
-        // padding: 10 // Temporarily removed
+        allowProposedApi: true, // Add this to use proposed APIs
+        padding: 10 // Add padding inside the terminal (10px)
       });
       
       const fitAddon = new FitAddon();
@@ -356,12 +356,25 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
       // Focus terminal
       term.focus();
       
-      // Handle window resize
-      const handleResize = () => {
+      // Create debounced resize handler
+      const handleResize = debounce(() => {
         if (fitAddonRef.current && terminalRef.current) {
           try {
             console.log('TerminalComponent: Window resize detected, fitting terminal'); // Added log
             fitAddonRef.current.fit();
+            
+            // Manual row calculation to prevent 50px height issue
+            const term = terminalRef.current;
+            const container = terminalContainerRef.current;
+            if (term.renderer?.dimensions?.actualCellHeight > 0) {
+                const containerHeight = container.getBoundingClientRect().height;
+                const cellHeight = term.renderer.dimensions.actualCellHeight;
+                const calculatedRows = Math.floor(containerHeight / cellHeight);
+                if (calculatedRows > 5) { // Prevent tiny terminal
+                    console.log(`TerminalComponent: Resize - setting rows to ${calculatedRows}`);
+                    term.resize(term.cols, calculatedRows);
+                }
+            }
             
             // Send new dimensions to server
             if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -375,7 +388,7 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
             console.error('Error handling resize:', e);
           }
         }
-      };
+      }, 200); // 200ms debounce
       
       // Add resize event listener
       window.addEventListener('resize', handleResize);
@@ -393,8 +406,97 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
     }
   };
 
+  // Add a resize observer directly on the terminal container
+  useLayoutEffect(() => {
+    if (!terminalContainerRef.current || !sessionId) return;
+    
+    // Initial setup - fix the terminal size immediately
+    const fixTerminalRows = () => {
+      if (terminalRef.current) {
+        // Always force terminal to maintain a fixed number of rows
+        // This is a drastic solution that prioritizes stability over adaptive sizing
+        const cols = terminalRef.current.cols || 80;
+        const FIXED_ROWS = 24;  // Fixed number of rows, regardless of container size
+        
+        console.log(`Terminal [${sessionId?.substring(0,4)}]: Forcing fixed ${cols}x${FIXED_ROWS} size`);
+        terminalRef.current.resize(cols, FIXED_ROWS);
+      }
+    };
+    
+    // Use a true ResizeObserver with a simple approach
+    const resizeObserver = new ResizeObserver((entries) => {
+      // We need a way to prevent resize loops
+      const entry = entries[0];
+      if (!entry) return;
+      
+      // Get container size
+      const { width, height } = entry.contentRect;
+      
+      // Check if size is too small
+      if (height < 150) {
+        console.log(`Terminal [${sessionId?.substring(0,4)}]: Container too small (${height}px), forcing minimum height`);
+        
+        // Hard fix: force minimum height if container shrinks below threshold
+        if (terminalContainerRef.current) {
+          terminalContainerRef.current.style.height = '400px';
+          terminalContainerRef.current.style.minHeight = '400px';
+        }
+      }
+      
+      // After forcing height, fit terminal then set fixed rows
+      if (fitAddonRef.current) {
+        // Fit to adjust terminal to current container
+        fitAddonRef.current.fit();
+        
+        // Then force fixed row count
+        fixTerminalRows();
+      }
+    });
+    
+    // Start observing
+    resizeObserver.observe(terminalContainerRef.current);
+    
+    // Immediately apply fixed rows for stability
+    setTimeout(fixTerminalRows, 100);
+    
+    // Clean up
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [sessionId, terminalRef.current, fitAddonRef.current]);
+  
+  // Force fixed terminal size on window resize (extreme fallback)
+  useEffect(() => {
+    const handleWindowResize = () => {
+      // Fix terminal container directly
+      if (terminalContainerRef.current) {
+        terminalContainerRef.current.style.height = '400px';
+        terminalContainerRef.current.style.minHeight = '400px';
+      }
+      
+      // Apply fit and fixed rows
+      if (fitAddonRef.current && terminalRef.current) {
+        const cols = terminalRef.current.cols || 80;
+        
+        // Try-catch to handle potential errors
+        try {
+          fitAddonRef.current.fit();
+          terminalRef.current.resize(cols, 24); // Force 24 rows always
+        } catch (e) {
+          console.error('Error during window resize handler:', e);
+        }
+      }
+    };
+    
+    window.addEventListener('resize', handleWindowResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [sessionId]);
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" style={{ minHeight: '400px' }}>
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-2 mb-2 text-sm">
           <p>{error}</p>
@@ -404,7 +506,9 @@ export default function TerminalComponent({ sessionId, onSessionClose, panelId }
       <div 
         ref={terminalContainerRef}
         className="w-full bg-black flex-grow"
-        style={{ position: 'relative', height: '100%' }}
+        style={{ 
+          height: '400px', /* Fixed absolute height - no calculations needed */
+        }}
       />
       
       {/* Status bar removed per user request */}
